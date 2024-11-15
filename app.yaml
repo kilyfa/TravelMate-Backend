@@ -1,10 +1,6 @@
-runtime: nodejs14
+runtime: nodejs20
 env: standard
 
 handlers:
   - url: /.*
     script: auto
-
-skip_files:
-  - node_modules/
-  - .git/
