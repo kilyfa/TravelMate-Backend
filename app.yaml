@@ -1,2 +1,10 @@
 runtime: nodejs14
-env: default
+env: standard
+
+handlers:
+  - url: /.*
+    script: auto
+
+skip_files:
+  - node_modules/
+  - .git/
