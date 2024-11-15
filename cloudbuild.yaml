@@ -1,5 +1,6 @@
 options:
   logging: NONE
+  region: "asia-southeast1"
 
 steps:
   - name: "gcr.io/cloud-builders/gcloud"
