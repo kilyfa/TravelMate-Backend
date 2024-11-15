@@ -1,5 +1,2 @@
-runtime: nodejs18
-instance_class: F2
-entrypoint: node src/server.js
-env_variables:
-  NODE_ENV: production
+runtime: nodejs14
+env: standard
