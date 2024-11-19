@@ -1,14 +1,15 @@
-const { postUserHandler, getUserByNameHandler, getProfileHandler, updateUserHandler, postActivityHandler, getHistoryHandler, getHistoryByIdHandler } = require("./handler");
-const upload = require("../middleware/upload");
+const { postUserHandler, testUploadFile, getUserByNameHandler, getProfileHandler, updateUserHandler, postActivityHandler, getHistoryHandler, getHistoryByIdHandler } = require("./handler");
 
 const routes = [
   {
     method: "POST",
     path: "/signup",
     handler: postUserHandler,
-    options: {
-      pre: [upload.single("image")],
-    },
+  },
+  {
+    method: "POST",
+    path: "/test",
+    handler: testUploadFile,
   },
   {
     method: "POST",
