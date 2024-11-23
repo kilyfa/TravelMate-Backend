@@ -5,15 +5,14 @@ const jwt = require("jsonwebtoken");
 const { storeData, verifyUser, getProfile, updateUser, postHistory, getHistory, getDetail } = require("../services/firestore");
 require("dotenv").config();
 const { Storage } = require("@google-cloud/storage");
-const path = require("path");
-console.log("Service account path:", process.env.GOOGLE_APPLICATION_CREDENTIALS);
+const ClientError = require("../exceptions/ClientError");
 
 const storage = new Storage({
   keyFilename: process.env.GOOGLE_APPLICATION_CREDENTIALS,
   projectId: "travelmate-capstone",
 });
 
-const uploadToFirebaseStorage = async (buffer, fileName) => {
+const uploadIImageToGCS = async (buffer, fileName) => {
   try {
     const bucketName = "userprofile-travelmate";
     const bucket = storage.bucket(bucketName);
@@ -28,38 +27,7 @@ const uploadToFirebaseStorage = async (buffer, fileName) => {
 
     return `https://storage.googleapis.com/${bucket.name}/${file.name}`;
   } catch (error) {
-    console.error("Error uploading file to Firebase Storage:", error);
-    throw new Error("Failed to upload file.");
-  }
-};
-
-const uploadFileToGCS = async (localFilePath, destinationPath) => {
-  try {
-    const bucketName = "userprofile-travelmate";
-    const bucket = storage.bucket(bucketName);
-
-    const [file] = await bucket.upload(localFilePath, {
-      destination: destinationPath,
-      predefinedAcl: "publicRead",
-    });
-
-    console.log("Upload berhasil:", file.metadata.mediaLink);
-    return file.metadata.mediaLink;
-  } catch (error) {
-    console.error("Error saat mengunggah file ke GCS:", error.message);
-    throw new Error("Gagal mengunggah file ke Google Cloud Storage.");
-  }
-};
-
-const testUploadFile = async () => {
-  try {
-    const localFilePath = "luffy_neko.jpeg";
-    const destinationPath = "profiles/test-upload.jpeg";
-
-    const publicUrl = await uploadFileToGCS(localFilePath, destinationPath);
-    console.log("File berhasil diunggah ke URL:", publicUrl);
-  } catch (error) {
-    console.error("Error:", error.message);
+    throw new ClientError("Failed to upload file.");
   }
 };
 
@@ -84,7 +52,7 @@ const postUserHandler = async (request, h) => {
 
   const buffer = Buffer.from(image, "base64");
 
-  const profileUrl = await uploadToFirebaseStorage(buffer, `${nameId}.jpg`);
+  const profileUrl = await uploadIImageToGCS(buffer, `${nameId}.jpg`);
 
   const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -258,4 +226,4 @@ const getHistoryByIdHandler = async (request, h) => {
   });
 };
 
-module.exports = { postUserHandler, testUploadFile, getUserByNameHandler, getProfileHandler, updateUserHandler, postActivityHandler, getHistoryHandler, getHistoryByIdHandler };
+module.exports = { postUserHandler, getUserByNameHandler, getProfileHandler, updateUserHandler, postActivityHandler, getHistoryHandler, getHistoryByIdHandler };

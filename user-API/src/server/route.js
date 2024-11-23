@@ -1,16 +1,18 @@
-const { postUserHandler, testUploadFile, getUserByNameHandler, getProfileHandler, updateUserHandler, postActivityHandler, getHistoryHandler, getHistoryByIdHandler } = require("./handler");
+const { postUserHandler, getUserByNameHandler, getProfileHandler, updateUserHandler, postActivityHandler, getHistoryHandler, getHistoryByIdHandler } = require("./handler");
 
 const routes = [
   {
     method: "POST",
     path: "/signup",
     handler: postUserHandler,
+    options: {
+      payload: {
+        allow: 'multipart/form-data',
+        multipart: true
+      }
+    }
   },
-  {
-    method: "POST",
-    path: "/test",
-    handler: testUploadFile,
-  },
+  
   {
     method: "POST",
     path: "/signin",
